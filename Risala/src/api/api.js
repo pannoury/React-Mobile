@@ -2,14 +2,11 @@ import axios from "axios";
 import store from "../redux/store";
 import { chatReducer } from "../redux/chat";
 import { useDispatch } from "react-redux";
-import informationManager from "../modules/informationManager";
+import informationManager from "../lib/informationManager";
 
 export function postRequest(URL, payload, headers){
     return new Promise((resolve, reject) => {
-        let url;
-        window.location.hostname === "localhost" ? 
-        url = `http://192.168.1.142:800/${URL}` :
-        url = `https://risala.codenoury.se/api/${URL}`
+        let url = `https://risala.codenoury.se/api/${URL}`
 
         axios.post(url, payload, headers)
         .then((response) => {

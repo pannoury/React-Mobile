@@ -17,12 +17,16 @@ export const globalStyles = StyleSheet.create({
             fontSize: 40
         },
         subText: {
-            color: '#ffffffb3'
+            color: '#ffffffb3',
+            marginTop: 10,
+            marginBottom: 10,
+            fontSize: 18,
+            textAlign: 'center'
         },
         label: {
             color: '#ffffffb3',
             fontWeight: 'bold',
-            marginBottom: 4
+            marginBottom: 4,
         }
     },
     input: {

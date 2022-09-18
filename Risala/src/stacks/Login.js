@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, ScrollView, Text, Image, StyleSheet, Button } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { getStorage } from "../api/asyncStorage";
+import { getStorage, setStorage } from "../lib/asyncStorage";
 import { postRequest } from "../api/api";
 
 // Styles
@@ -10,6 +10,30 @@ import { globalStyles } from "../styles/styles";
 export default function Login({ navigation }){
     const [usernameInput, setUserNameInput] = useState('')
     const [passwordInput, setPasswordInput] = useState('')
+    const [isWrong, setIsWrong] = useState(false)
+
+    useEffect(() => {
+        getStorage('user')
+        .then((response) => {
+          if(response){
+            checkUser(JSON.parse(response).response)
+          }
+          
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    
+        function checkUser(value){
+          postRequest('accounts', {
+            account: value.account_id, 
+            username: value.username
+          })
+          .then((response) => {
+            navigation.navigate('Chat', { name: 'Chat' })
+          })
+        }
+      }, [])
 
     useEffect(() => {
         console.log(usernameInput)
@@ -22,7 +46,12 @@ export default function Login({ navigation }){
             password: passwordInput
         })
         .then((response) => {
-            console.log(response)
+            if(response === "No match was found"){
+                setIsWrong(true)
+            } else {
+                setIsWrong(false)
+                setStorage('user', JSON.stringify({response}))
+            }
         })
         .catch((err) => {
             console.log(err)
@@ -42,6 +71,14 @@ export default function Login({ navigation }){
                         Enter your credentials to access the chat application
                     </Text>
                 </View>
+                {
+                    isWrong &&
+                    <View style={style.wrongDiv}>
+                        <Text style={{color: "#fff", fontSize: 12, fontWeight: 'bold'}}>
+                            Wrong username/password entered. Please try again
+                        </Text>
+                    </View>
+                }
                 <View style={{width: '90%'}}>
                     <Text style={globalStyles.text.label}>Username</Text>
                     <TextInput
@@ -116,5 +153,16 @@ const style = StyleSheet.create({
     link: {
         color: '#ffb301',
         marginLeft: 10
+    },
+    wrongDiv: {
+        backgroundColor: 'red',
+        borderRadius: 6,
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        maxWidth: '90%',
+        marginTop: 20,
+        marginBottom: 20,
     }
 })
