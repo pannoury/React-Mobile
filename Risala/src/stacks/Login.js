@@ -3,14 +3,23 @@ import { View, ScrollView, Text, Image, StyleSheet, Button } from "react-native"
 import { TextInput } from "react-native-gesture-handler";
 import { getStorage, setStorage } from "../lib/asyncStorage";
 import { postRequest } from "../api/api";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import 'react-native-gesture-handler';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+const Stack = createNativeStackNavigator();
 
 // Styles
 import { globalStyles } from "../styles/styles";
 
-export default function Login({ navigation }){
+// Components
+import SignIn from "../login/SignIn";
+
+export default function Login({}){
     const [usernameInput, setUserNameInput] = useState('')
     const [passwordInput, setPasswordInput] = useState('')
     const [isWrong, setIsWrong] = useState(false)
+    const navigation = useNavigation();
 
     useEffect(() => {
         getStorage('user')
@@ -59,66 +68,13 @@ export default function Login({ navigation }){
     }
 
     return(
-        <ScrollView style={{minHeight: '100%', backgroundColor: '#000'}}>
-            <View style={style.container}>
-                <View style={{width: '90%', alignItems: 'center', justifyContent: 'flex-start'}}>
-                    <Image
-                        style={style.logo} 
-                        source={require('../assets/logo-long-yellow.png')}
-                    ></Image>
-                    <Text style={globalStyles.text.whiteHeader}>Sign in</Text>
-                    <Text style={globalStyles.text.subText}>
-                        Enter your credentials to access the chat application
-                    </Text>
-                </View>
-                {
-                    isWrong &&
-                    <View style={style.wrongDiv}>
-                        <Text style={{color: "#fff", fontSize: 12, fontWeight: 'bold'}}>
-                            Wrong username/password entered. Please try again
-                        </Text>
-                    </View>
-                }
-                <View style={{width: '90%'}}>
-                    <Text style={globalStyles.text.label}>Username</Text>
-                    <TextInput
-                        style={style.input}
-                        placeholder="joe@hotmail.com"
-                        onChangeText={setUserNameInput}
-                        value={usernameInput}
-                    >
-                    </TextInput>
-                </View>
-                <View style={{width: '90%'}}>
-                    <Text style={globalStyles.text.label}>Password</Text>
-                    <TextInput
-                        style={style.input}
-                        onChangeText={setPasswordInput}
-                        value={passwordInput}
-                        secureTextEntry={true}
-                    >
-                    </TextInput>
-                </View>
-                <View
-                    style={{flexDirection: 'column'}}
-                >
-                    <Button
-                        title="Sign in"
-                        color={'#ffb301'}
-                        style={globalStyles.button}
-                        onPress={signIn}
-                    />
-                    <View style={style.flexRow}>
-                        <Text style={globalStyles.colors.white} >Don't have an account?</Text>
-                        <Text style={style.link}>Sign up</Text>
-                    </View>
-                    <View style={style.flexRow}>
-                        <Text style={globalStyles.colors.white}>Forgotten your password?</Text>
-                        <Text style={style.link}>Restore account</Text>
-                    </View>
-                </View>
-            </View>
-        </ScrollView>
+        <SafeAreaView>
+            <NavigationContainer>
+                <Stack.Navigator>
+                    <Stack.Screen name="Sign In" component={SignIn} options={{headerShown: false}}/>
+                </Stack.Navigator>
+            </NavigationContainer>
+        </SafeAreaView>
     )
 }
 

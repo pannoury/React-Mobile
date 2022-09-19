@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { View, Text, Image, StyleSheet, Button } from "react-native";
+import { View, Text, Image, StyleSheet, Button, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { chatReducer, objectAdd } from "../redux/chat";
 import { callSettingReducer } from "../redux/callSettings";
-
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import 'react-native-gesture-handler';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // Components
 import ChatSideMenu from "../chat/ChatSideMenu/ChatSideMenu";
@@ -11,8 +13,15 @@ import ChatSideMenu from "../chat/ChatSideMenu/ChatSideMenu";
 // Library
 import { SocketContext } from "../subcomponents/Socket";
 import { postRequest, errorManagement } from "../api/api";
+import { socketMessage, socketTyping, socketRemove, socketExit, socketJoin } from "../lib/socketRoutes";
+import { getStorage } from "../lib/asyncStorage";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StackActions } from "@react-navigation/native";
+import ChatDisplay from "../chat/ChatDisplay/ChatDisplay";
 
-export default function Chat({ navigation }){
+const Stack = createNativeStackNavigator();
+
+export default function Chat({ navigation, page, setPage }){
     const socket = useContext(SocketContext)
     const dispatch = useDispatch();
     const current = useSelector((state) => state.chatReducer.value.current)
@@ -27,6 +36,7 @@ export default function Chat({ navigation }){
 
     const inputRef = useRef();
     const [access, setAccess] = useState(false)
+    const [stackView, setStackView] = useState('Index')
 
     // Socket routes
     useEffect(() => {
@@ -44,10 +54,10 @@ export default function Chat({ navigation }){
             socket.on('group-join', socketJoin)
 
             //Call routes
-            socket.on('call-init', (data) => { 
-                callInit(data, socket) 
-            })
-            socket.on('call-join', callJoin)
+            //socket.on('call-init', (data) => { 
+            //    callInit(data, socket) 
+            //})
+            //socket.on('call-join', callJoin)
         }
 
         return(() => {
@@ -59,34 +69,48 @@ export default function Chat({ navigation }){
     // Check if user exists
     useEffect(() => {
 
-        if (localStorage.getItem('user')) {
-            var user = JSON.parse(localStorage.getItem('user'))
+        if (getStorage('user')) {
+            getStorage('user')
+            .then((response) => {
+                var response = JSON.parse(response).response
+                dispatch(chatReducer({
+                    USER_DATA: {
+                        account_id: response.account_id,
+                        username: response.username,
+                        firstname: response.firstname,
+                        lastname: response.lastname,
+                        profile_picture: response.profile_picture
+                    }
+                }))
+            })
 
-            postRequest('accounts', {
-                account: user.id,
-                username: user.username
-            })
-            .then((response) =>{
-                setAccess(true)
-                getHistory();
-                dispatch(objectAdd({key: 'USER_DATA', value: response}))
-            })
-            .catch((err) => {
-              
-              setTimeout(() => {
-                router.push("/login/")
-              }, 3000)
-            })
+            //postRequest('accounts', {
+            //    account: user.id,
+            //    username: user.username
+            //})
+            //.then((response) =>{
+            //    setAccess(true)
+            //    getHistory();
+            //    dispatch(objectAdd({key: 'USER_DATA', value: response}))
+            //})
+            //.catch((err) => {
+            //  
+            //  setTimeout(() => {
+            //    router.push("/login/")
+            //  }, 3000)
+            //})
         } else {
-          router.push("/login/");
+          
         }
 
     }, [])
 
     return(
-        <View>
-            <ChatSideMenu socket={socket}/>
-
-        </View>
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Sidemenu" component={ChatSideMenu} options={{headerShown: false}}/>
+                <Stack.Screen name="Display" component={ChatDisplay} options={{headerShown: false}} />
+            </Stack.Navigator>
+        </NavigationContainer>
     )
 }

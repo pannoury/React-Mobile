@@ -5,10 +5,18 @@ export const globalStyles = StyleSheet.create({
         width: '90%'
     },
     colors: {
-        yellow: { color: '#ffb301' },
-        white: { color: '#fff'},
-        white_1: { color: '#ffffffb3' },
-        black: { color: '#000'}
+        yellow: '#ffb301',
+        yellow_10: '#d39400',
+        white: '#fff',
+        white_1: '#ffffffb3',
+        white_2: '#ffffff33',
+        white_3: '#ffffff1a',
+        black:   '#000',
+        black_1: '#141414',
+        black_2: '#ffffff1a',
+        black_3: '#2c2c2c',
+        black_4: '#1d1d1d',
+        red: '#e62b2b'
     },
     text: {
         whiteHeader: {
