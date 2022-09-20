@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View, Text, Image, Pressable } from "react-native";
+import { ScrollView, View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { timeStamp } from "../../../lib/timeStamp";
 import { chatReducer, arrayEmpty } from "../../../redux/chat";
@@ -57,7 +57,7 @@ export default function Conversations({chats, conversationSelect}){
                     //timestamp fix
                     var time_stamp = timeStamp(value.recent_message.timestamp, false)
                     return(
-                        <Pressable
+                        <TouchableOpacity
                             key={value + index}
                             onPress={(() => { conversationSelect(value.id)})}
                             style={{width: '100%', flexDirection: 'row', paddingTop: 8, paddingBottom: 8, alignItems: 'center'}}
@@ -112,7 +112,7 @@ export default function Conversations({chats, conversationSelect}){
                                     }
                                 </View>
                             </View>
-                        </Pressable>
+                        </TouchableOpacity>
                     )
                 })
             }

@@ -7,9 +7,11 @@ import { globalStyles } from "../../styles/styles";
 import searchFunction from "./functions/searchFunction";
 import { getStorage } from "../../lib/asyncStorage";
 import { postRequest } from "../../api/api";
-import TempChats from "./components/TempChats";
+
+
 
 // Components
+import TempChats from "./components/TempChats";
 
 export default function ChatSideMenu({ navigation }){
     const dispatch = useDispatch();
@@ -164,7 +166,6 @@ export default function ChatSideMenu({ navigation }){
                         source={{uri: USER_DATA.profile_picture ? `https://risala.codenoury.se/${USER_DATA.profile_picture.substring(3)}` : "https://codenoury.se/assets/generic-profile-picture.png"}}
                     />
                     <Text style={{color: "#fff", fontSize: 26, fontWeight: '600'}}>Chats</Text>
-                    
                 </View>
                 <View style={{width: '100%', alignItems: 'center'}}>
                     <TextInput

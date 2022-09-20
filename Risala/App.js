@@ -46,7 +46,8 @@ export default function App({ }){
   return (
     <Provider store={store}>
       <SocketProvider>
-       <StatusBar
+        <SafeAreaProvider>
+        <StatusBar
           backgroundColor={'#000'}
           barStyle={'light-content'}
         />
@@ -68,6 +69,7 @@ export default function App({ }){
           page === "Home" &&
           <Home/>
         }
+        </SafeAreaProvider>
       </SocketProvider>
     </Provider>
   );
